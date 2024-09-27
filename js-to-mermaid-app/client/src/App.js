@@ -7,6 +7,8 @@ import './styles.css'; // Import custom styles
 // Main App component
 const App = () => {
   const [code, setCode] = useState(''); // State for user input code
+  const [htmlCode, setHtmlCode] = useState(''); // State for HTML input
+  const [cssCode, setCssCode] = useState(''); // State for CSS input
   const [mermaidCode, setMermaidCode] = useState(''); // State for Mermaid syntax
 
   // Initialize Mermaid whenever the mermaidCode changes
@@ -25,6 +27,8 @@ const App = () => {
   const handleSubmit = async () => {
     console.log("Submit button clicked."); // Log when the button is clicked
     console.log("User code:", code); // Log the input code to check
+    console.log("User HTML:", htmlCode);
+    console.log("User CSS:", cssCode);
 
     if (!code) {
       console.error("No code provided."); // Log error if code is empty
@@ -43,6 +47,25 @@ const App = () => {
     }
   };
 
+  // Handle preview functionality
+  const handlePreview = () => {
+    const previewFrame = document.getElementById('preview-frame');
+    const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+    doc.open();
+    doc.write(`
+      <html>
+        <head>
+          <style>${cssCode}</style>
+        </head>
+        <body>
+          ${htmlCode}
+          <script>${code}</script>
+        </body>
+      </html>
+    `);
+    doc.close();
+  };
+
   // Render the app UI
   return (
     <div className="app-container">
@@ -53,7 +76,18 @@ const App = () => {
           value={code}
           onChange={(e) => setCode(e.target.value)}
         />
+        <textarea
+          placeholder="Paste your HTML code here..."
+          value={htmlCode}
+          onChange={(e) => setHtmlCode(e.target.value)}
+        />
+        <textarea
+          placeholder="Paste your CSS code here..."
+          value={cssCode}
+          onChange={(e) => setCssCode(e.target.value)}
+        />
         <button onClick={handleSubmit}>Generate Flowchart</button>
+        <button onClick={handlePreview}>Preview</button>
       </div>
       <div className="output-container">
         <h2>Flowchart Preview</h2>
@@ -64,6 +98,7 @@ const App = () => {
           <p>No flowchart available yet. Please paste your JavaScript code and click "Generate Flowchart".</p>
         )}
       </div>
+      <iframe id="preview-frame" style={{ width: '100%', height: '400px', border: '1px solid #ddd' }}></iframe>
     </div>
   );
 };

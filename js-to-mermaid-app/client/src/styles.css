@@ -12,8 +12,9 @@
 
 textarea {
   width: 600px;
-  height: 200px;
+  height: 100px; /* Adjusted height for HTML and CSS */
   margin-right: 10px;
+  margin-bottom: 10px; /* Added margin for spacing */
 }
 
 button {
