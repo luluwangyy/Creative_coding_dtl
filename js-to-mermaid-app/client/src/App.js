@@ -10,6 +10,7 @@ const App = () => {
   const [htmlCode, setHtmlCode] = useState(''); // State for HTML input
   const [cssCode, setCssCode] = useState(''); // State for CSS input
   const [mermaidCode, setMermaidCode] = useState(''); // State for Mermaid syntax
+  const [llmInput, setLlmInput] = useState('');
 
   // Initialize Mermaid whenever the mermaidCode changes
   useEffect(() => {
@@ -66,6 +67,30 @@ const App = () => {
     doc.close();
   };
 
+  // Handle LLM chat submission
+  const handleLLMChat = async () => {
+    try {
+      console.log('Sending request to server:', { llmInput, code, htmlCode, cssCode });
+      const response = await axios.post('http://localhost:5000/llm-chat', {
+        llmInput,
+        code,
+        htmlCode,
+        cssCode
+      });
+      
+      console.log('Received response from server:', response.data);
+  
+      if (response.data.updatedCode) {
+        console.log('Updated code:', response.data.updatedCode);
+        setCode(response.data.updatedCode.js || code);
+        setHtmlCode(response.data.updatedCode.html || htmlCode);
+        setCssCode(response.data.updatedCode.css || cssCode);
+      }
+    } catch (error) {
+      console.error('Error communicating with LLM:', error);
+    }
+  };
+
   // Render the app UI
   return (
     <div className="app-container">
@@ -99,6 +124,12 @@ const App = () => {
         )}
       </div>
       <iframe id="preview-frame" style={{ width: '100%', height: '400px', border: '1px solid #ddd' }}></iframe>
+      <textarea
+        placeholder="Ask LLM to help with your code..."
+        value={llmInput}
+        onChange={(e) => setLlmInput(e.target.value)}
+      />
+      <button onClick={handleLLMChat}>Submit to LLM</button>
     </div>
   );
 };
