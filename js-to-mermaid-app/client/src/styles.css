@@ -37,4 +37,10 @@ button {
 
 .mermaid text {
   fill: black; /* Ensure text fill color is black */
+  font-size: 14px; /* Adjust font size if necessary */
+}
+
+.mermaid .node text {
+  fill: black; /* Ensure node text color is black */
+  font-weight: bold; /* Make text bold for better visibility */
 }

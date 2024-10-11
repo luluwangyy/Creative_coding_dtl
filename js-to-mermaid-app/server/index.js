@@ -57,82 +57,111 @@ function mergePartialUpdate(original, update) {
 }
 // POST endpoint to handle the JavaScript code input
 app.post('/generate-flowchart', async (req, res) => {
-  const userCode = req.body.code; // Retrieve the user's code from the request body
+    const { code, htmlCode, cssCode } = req.body; // Retrieve all code sections from the request body
 
-  if (!userCode) {
-    console.error("No code received in request body.");
-    return res.status(400).send('No code provided.');
-  }
-
-  try {
-    console.log("Received code:", userCode);
-
-    // Request data for the OpenAI API
-    const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
-      {
-        model: 'gpt-4',
-        messages: [
-          { role: 'system', content: 'You are a helpful assistant.' },
-          { role: 'user', content: `Create a flowchart in Mermaid syntax for the following JavaScript code: ${userCode}. Generate only the Mermaid syntax flowchart. Do not include any explanations, introductions, or additional text. 
-          Only output the raw Mermaid code. 
-          Do not include any ( or ) or any quotation marks.
-          Do not include sentences like "This flowchart represents the steps the JavaScript code is taking and how it flows from one execution to another." Do not start with the word "mermaid". Just start with raw code and end with raw code. Example:
-            '''  
-            graph TD
-              A[Start] --> B[Initialize Renderer]
-              B --> C[Create Scene]
-              C --> D[Set Up Camera]
-              D --> E[Create Container Object]
-              E --> F[Load Texture with Loader]
-              F --> G[Define createDots Function]
-              G --> H[Set Up TweenMax Animation]
-              H --> I[Define Render Function]
-              I --> J[Call createDots]
-              J --> K[Start Animation Loop]
-              K --> L[Add Window Resize Event Listener]
-              G --> G1[Create Geometry]
-              G --> G2[Create Plane Geometry]
-              G --> G3[Create Dots]
-              I --> I1[Update Dots Vertices]
-              I --> I2[Update Plane Vertices]
-              I --> I3[Update Camera Position]
-              I --> I4[Render Scene with Renderer]
-              L --> L1[Update Camera Aspect Ratio]
-              L --> L2[Adjust Renderer Size]
-              K --> I
-              I --> K
-
-              Do not include any other sentences!
-               
-              ` }
-        ]
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}` // Use the API key from environment variables
-        }
-      }
-    );
-
-    // Extract the Mermaid syntax from the response
-    if (response.data.choices && response.data.choices.length > 0) {
-      const mermaidSyntax = response.data.choices[0].message.content;
-
-      // Extract output without ''' and 'mermaid'
-      const cleanedMermaidSyntax = mermaidSyntax.replace(/```mermaid|```/g, '').trim();
-      console.log("Generated Mermaid syntax:", cleanedMermaidSyntax);
-      res.json({ mermaid: cleanedMermaidSyntax });
-    } else {
-      console.error("Unexpected response format from OpenAI API:", response.data);
-      res.status(500).send('Error: Unexpected response format from OpenAI API.');
+    if (!code || !htmlCode || !cssCode) {
+        console.error("All code sections must be provided.");
+        return res.status(400).send('All code sections must be provided.');
     }
-  } catch (error) {
-    // Log detailed error information
-    console.error('Error occurred while communicating with OpenAI:', error.response ? error.response.data : error.message);
-    res.status(500).send('Error generating flowchart.');
-  }
+
+    try {
+        console.log("Received code:", code);
+        console.log("Received HTML:", htmlCode);
+        console.log("Received CSS:", cssCode);
+
+        // Request data for the OpenAI API
+        const response = await axios.post(
+            'https://api.openai.com/v1/chat/completions',
+            {
+                model: 'gpt-4',
+                messages: [
+                    { role: 'system', content: 'You are a helpful assistant that generates flowcharts.' },
+                    { role: 'user', content: `Create a flowchart in Mermaid syntax that includes the structure of the following code sections and their connections:
+                    
+                    JavaScript:
+                    ${code}
+
+                    HTML:
+                    ${htmlCode}
+
+                    CSS:
+                    ${cssCode}
+
+                    Use larger blocks to mark out the three sections corresponding to JavaScript, HTML, and CSS, and use arrows to indicate their interconnections. Only output the raw Mermaid code.
+                
+
+                    Only output the raw Mermaid code. 
+                    Do not include any ( or ) or any quotation marks.
+                    Do not include sentences like "This flowchart represents the steps the  code is taking and how it flows from one execution to another." Do not start with the word "mermaid". Just start with raw code and end with raw code. Example:
+                      you MUST follow the stucture provided in the sample output below! start with graph TD and using subgraph to divided HTML, CSS and JS section and create logic between them!!!use arrow and logic in between to show how the function in different file connect to each other!!!! Make sure the mermaid syntax is correct!
+                      graph TD 
+                      subgraph HTML Section 
+                          A[Canvas Element] 
+                          B[Script Element] 
+                      end
+
+                      subgraph CSS Section
+                          C[Canvas Styles]
+                          D[SVG Styles]
+                      end
+
+                      subgraph JavaScript Section
+                          E[Global Constants]
+                          F[Create Flower Function]
+                          F1[Grow Function]
+                          F2[Drop Function]
+                          F3[Transform Function]
+                          F4[Step Function]
+                          F5[Delete Function]
+                          G[Shade RGB Color Function]
+                          H[Animate Flowers Function]
+                          I[Draw Branch Function]
+                          J[Draw Tree Function]
+                          K[Initialization]
+                      end
+
+                      A -->|Interacts with| F
+                      B -->|Loads| K
+                      C -->|Styles Canvas| A
+                      D -->|Styles SVG| F
+                      E -->|Provides Constants| F
+                      E -->|Provides Constants| G
+                      F -->|Manages Flower Logic| H
+                      F1 -->|Handles Growth| F3
+                      F2 -->|Handles Drop| F3
+                      F3 -->|Transforms Flower| F4
+                      F4 -->|Manages State| F5
+                      F5 -->|Removes Flower| H
+                      G -->|Adjusts Colors| I
+                      H -->|Controls Flower Animation| I
+                      I -->|Draws Branches| J
+                      J -->|Draws Tree Structure| K
+
+                        ` }
+                  ]
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${process.env.OPENAI_API_KEY}` // Use the API key from environment variables
+                }
+            }
+        );
+
+        // Extract the Mermaid syntax from the response
+        if (response.data.choices && response.data.choices.length > 0) {
+            const mermaidSyntax = response.data.choices[0].message.content;
+            const cleanedMermaidSyntax = mermaidSyntax.replace(/```mermaid|```/g, '').trim();
+            console.log("Generated Mermaid syntax:", cleanedMermaidSyntax);
+            res.json({ mermaid: cleanedMermaidSyntax });
+        } else {
+            console.error("Unexpected response format from OpenAI API:", response.data);
+            res.status(500).send('Error: Unexpected response format from OpenAI API.');
+        }
+    } catch (error) {
+        console.error('Error occurred while communicating with OpenAI:', error.response ? error.response.data : error.message);
+        res.status(500).send('Error generating flowchart.');
+    }
 });
 
 // POST endpoint to handle the LLM chat

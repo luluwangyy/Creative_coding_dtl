@@ -5,6 +5,7 @@ import mermaid from 'mermaid';
 import './styles.css'; // Import custom styles
 
 // Main App component
+
 const App = () => {
   const [code, setCode] = useState(''); // State for user input code
   const [htmlCode, setHtmlCode] = useState(''); // State for HTML input
@@ -31,20 +32,20 @@ const App = () => {
     console.log("User HTML:", htmlCode);
     console.log("User CSS:", cssCode);
 
-    if (!code) {
-      console.error("No code provided."); // Log error if code is empty
-      return;
+    if (!code || !htmlCode || !cssCode) {
+        console.error("All code sections must be provided."); // Log error if any code is empty
+        return;
     }
 
     try {
-      // Make a POST request to the backend server
-      const response = await axios.post('http://localhost:5000/generate-flowchart', { code });
-      console.log("Response from server:", response); // Log the entire response
+        // Make a POST request to the backend server with all code sections
+        const response = await axios.post('http://localhost:5000/generate-flowchart', { code, htmlCode, cssCode });
+        console.log("Response from server:", response); // Log the entire response
 
-      // Extract the Mermaid syntax from the response and update the state
-      setMermaidCode(response.data.mermaid);
+        // Extract the Mermaid syntax from the response and update the state
+        setMermaidCode(response.data.mermaid);
     } catch (error) {
-      console.error('Error generating flowchart:', error); // Log any errors
+        console.error('Error generating flowchart:', error); // Log any errors
     }
   };
 
