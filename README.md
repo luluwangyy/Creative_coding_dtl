@@ -1,4 +1,4 @@
-# Creative Coding DTI
+# Creative Coding DTL
 
 This project is built using a React frontend and Node.js backend structure.
 
