@@ -1,4 +1,3 @@
- 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import mermaid from 'mermaid';
@@ -90,6 +89,146 @@ const App = () => {
   };
 
   //   app UI
+  const setDefaultCode = () => {
+    setCode(` 
+`);
+    setHtmlCode(`
+<div id='two'></div>
+<div id='three'></div>
+<div id='four'></div>
+
+
+<div id='six'></div> 
+<div id='seven'></div>
+<div id='eight'></div>`);
+    setCssCode(`#one{
+  position: absolute;
+  top: 25%;
+  left: 25%;
+  height: 50%;
+  width: 50%;
+  border-style: solid;
+  border-width: 5px;
+  background: rgba(0,0,0,0);
+ transform: scale(1);
+	animation: pulse 5.11s infinite, rotationA  5.11s infinite; 
+}
+
+#two{
+  position: absolute;
+  top: 25%;
+  left: 25%;
+  height: 50%;
+  width: 50%;
+  border-style: solid;
+  border-width: 5px;
+  background: rgba(0,0,255,.1);
+  transform: scale(1);
+	animation: pulse 10.213s infinite, rotationA 10.213s infinite; 
+}
+
+#three{
+  position: absolute;
+  top: 25%;
+  left: 25%;
+  height: 50%;
+  width: 50%;
+  border-style: solid;
+  border-width: 5px;
+  background: rgba(0,255,0,0.1);
+  transform: scale(1);
+  
+    animation: rotationA 9.125s infinite, pulse 9.125s infinite; 
+}
+
+#four{
+  position: absolute;
+  top: 25%;
+  left: 25%;
+  height: 50%;
+  width: 50%;
+  border-style: solid;
+  border-width: 5px;
+  background: rgba(255,0,0,0.1);
+  
+  animation: pulse 13s infinite; 
+  animation: rotationA 15s infinite, pusle 15s infinite; 
+}
+
+
+#five{
+  position: absolute;
+  
+  height: 100%;
+  width: 100%;
+  border-style: solid;
+  border-width: 5px;
+  background: rgba(0,0,0,0);
+ transform: scale(1);
+	animation: pulse 5.231s infinite, rotationA  5.231s infinite; 
+}
+
+#six{
+  position: absolute;
+  
+  height: 100%;
+  width: 100%;
+  border-style: solid;
+  border-width: 5px;
+  background: rgba(0,0,255,.1);
+  transform: scale(1);
+	animation: pulse 10s infinite, rotationA 10s infinite; 
+}
+
+#seven{
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  border-style: solid;
+  border-width: 5px;
+  background: rgba(0,255,0,0.1);
+  transform: scale(1);  
+    animation: rotationA 9s infinite, pulse 9s infinite; 
+}
+
+#eight{
+  position: absolute;
+  ;
+  height: 100%;
+  width: 100%;
+  border-style: solid;
+  border-width: 5px;
+  background: rgba(255,0,0,0.1);  
+  animation: rotationA 15s infinite, pusle 15s infinite; 
+}
+
+
+@keyframes pulse {
+	0% {
+		transform: scale(2);
+	
+	}
+
+	70% {
+		transform: scale(1);
+	
+	}
+
+	100% {
+		transform: scale(2);
+	
+	}
+}
+
+
+@keyframes rotationA {
+	50% {transform: rotate(180deg);
+    
+  }
+
+}`);
+  };
+
   return (
     <div className="app-container">
       <h1>Creative Coding to Flowchart Generator</h1>
@@ -111,6 +250,7 @@ const App = () => {
         />
         <button onClick={handleSubmit}>Generate Flowchart</button>
         <button onClick={handlePreview}>Preview</button>
+        <button onClick={setDefaultCode}>Load Default Code</button>
       </div>
       <div className="output-container">
         <h2>Flowchart Preview</h2>
