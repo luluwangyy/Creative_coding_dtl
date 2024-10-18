@@ -1,25 +1,24 @@
-// Import required modules
+ 
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const axios = require('axios');
-require('dotenv').config(); // Load environment variables
-
-// Initialize the Express app
+require('dotenv').config();  
+ 
 const app = express();
 
-// Middleware setup
-app.use(cors()); // Enable CORS for cross-origin requests
-app.use(bodyParser.json()); // Parse JSON requests
+ 
+app.use(cors()); //   CORS for cross-origin requests
+app.use(bodyParser.json());  
 
-// Helper function to merge partial updates
+ 
 function mergePartialUpdate(original, update) {
   if (!update || update === original) return original;
 
   const originalLines = original.split('\n');
   const updateLines = update.split('\n');
 
-  // Find the start and end of the update in the original code
+  
   let startIndex = -1;
   let endIndex = -1;
 
@@ -31,7 +30,7 @@ function mergePartialUpdate(original, update) {
     }
   }
 
-  // If we couldn't find the exact match, fall back to a more lenient approach
+  // If we couldn't find the exact match, fall back 
   if (startIndex === -1) {
     for (let i = 0; i < originalLines.length; i++) {
       if (originalLines[i].includes(updateLines[0].trim())) {

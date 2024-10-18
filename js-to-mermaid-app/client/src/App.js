@@ -1,48 +1,45 @@
-// Import required React modules
+ 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import mermaid from 'mermaid';
-import './styles.css'; // Import custom styles
-
-// Main App component
-
+import './styles.css';  
 const App = () => {
-  const [code, setCode] = useState(''); // State for user input code
-  const [htmlCode, setHtmlCode] = useState(''); // State for HTML input
-  const [cssCode, setCssCode] = useState(''); // State for CSS input
+  const [code, setCode] = useState(''); 
+  const [htmlCode, setHtmlCode] = useState(''); 
+  const [cssCode, setCssCode] = useState(''); 
   const [mermaidCode, setMermaidCode] = useState(''); // State for Mermaid syntax
   const [llmInput, setLlmInput] = useState('');
 
-  // Initialize Mermaid whenever the mermaidCode changes
+ 
   useEffect(() => {
     if (mermaidCode) {
       mermaid.initialize({ startOnLoad: true });
       try {
-        mermaid.contentLoaded(); // Ensure this is called after setting mermaidCode
+        mermaid.contentLoaded(); //   after setting mermaidCode
       } catch (error) {
         console.error("Error rendering Mermaid diagram:", error);
       }
     }
   }, [mermaidCode]);
 
-  // Handle form submission
+  //  submission
   const handleSubmit = async () => {
-    console.log("Submit button clicked."); // Log when the button is clicked
-    console.log("User code:", code); // Log the input code to check
+    console.log("Submit button clicked."); 
+    console.log("User code:", code);  
     console.log("User HTML:", htmlCode);
     console.log("User CSS:", cssCode);
 
     if (!code || !htmlCode || !cssCode) {
-        console.error("All code sections must be provided."); // Log error if any code is empty
+        console.error("All code sections must be provided."); // Log  
         return;
     }
 
     try {
-        // Make a POST request to the backend server with all code sections
+        //   with all code sections
         const response = await axios.post('http://localhost:5000/generate-flowchart', { code, htmlCode, cssCode });
         console.log("Response from server:", response); // Log the entire response
 
-        // Extract the Mermaid syntax from the response and update the state
+        // Extract the Mermaid syntax  
         setMermaidCode(response.data.mermaid);
     } catch (error) {
         console.error('Error generating flowchart:', error); // Log any errors
@@ -92,10 +89,10 @@ const App = () => {
     }
   };
 
-  // Render the app UI
+  //   app UI
   return (
     <div className="app-container">
-      <h1>JavaScript to Flowchart Generator</h1>
+      <h1>Creative Coding to Flowchart Generator</h1>
       <div className="input-container">
         <textarea
           placeholder="Paste your JavaScript code here..."

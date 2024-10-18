@@ -1,4 +1,4 @@
-/* Basic styling */
+
 .app-container {
   display: flex;
   flex-direction: column;
@@ -32,15 +32,15 @@ button {
   padding: 10px;
   background-color: #f9f9f9;
   border: 1px solid #ddd;
-  color: black; /* Ensure text color is black */
+  color: black; 
 }
 
 .mermaid text {
-  fill: black; /* Ensure text fill color is black */
-  font-size: 14px; /* Adjust font size if necessary */
+  fill: black;  
+  font-size: 14px;  
 }
 
 .mermaid .node text {
-  fill: black; /* Ensure node text color is black */
-  font-weight: bold; /* Make text bold for better visibility */
+  fill: black;  
+  font-weight: bold; 
 }

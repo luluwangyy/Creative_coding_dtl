@@ -12,9 +12,9 @@ code {
     monospace;
 }
 
-/* Add this section for Mermaid styling */
+
 .mermaid {
-  color: black; /* Ensure text color is black */
+  color: black;  
 }
 
 .mermaid text {
