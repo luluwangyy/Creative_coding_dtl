@@ -15,8 +15,8 @@ To get started with this project, follow these steps:
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/creative_coding_dti.git
-   cd creative_coding_dti
+   git clone https://github.com/your-username/creative_coding_dtl.git
+   cd creative_coding_dtl
    ```
 
 2. Set up the client:
@@ -26,7 +26,7 @@ To get started with this project, follow these steps:
    ```
 
 3. Add your OpenAI API key:
-   - In the `client` folder, create a `.env` file if it doesn't exist
+   - In the `client` folder, 
    - Add your OpenAI API key to the `.env` file:
      ```
       OPENAI_API_KEY=your_api_key_here
