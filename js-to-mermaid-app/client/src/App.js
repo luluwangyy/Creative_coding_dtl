@@ -1,51 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import mermaid from 'mermaid';
-import './styles.css';  
+import { UnControlled as CodeMirror } from 'react-codemirror2';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/material-darker.css';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/htmlmixed/htmlmixed';
+import 'codemirror/mode/css/css';
+import './styles.css';
+
 const App = () => {
-  const [code, setCode] = useState(''); 
-  const [htmlCode, setHtmlCode] = useState(''); 
-  const [cssCode, setCssCode] = useState(''); 
-  const [mermaidCode, setMermaidCode] = useState(''); // State for Mermaid syntax
+  const [code, setCode] = useState('');
+  const [htmlCode, setHtmlCode] = useState('');
+  const [cssCode, setCssCode] = useState('');
+  const [mermaidCode, setMermaidCode] = useState('');
   const [llmInput, setLlmInput] = useState('');
 
- 
+  const jsEditorRef = useRef(null);
+  const htmlEditorRef = useRef(null);
+  const cssEditorRef = useRef(null);
+
   useEffect(() => {
     if (mermaidCode) {
       mermaid.initialize({ startOnLoad: true });
       try {
-        mermaid.contentLoaded(); //   after setting mermaidCode
+        mermaid.contentLoaded();
       } catch (error) {
         console.error("Error rendering Mermaid diagram:", error);
       }
     }
   }, [mermaidCode]);
 
-  //  submission
   const handleSubmit = async () => {
-    console.log("Submit button clicked."); 
-    console.log("User code:", code);  
+    console.log("Submit button clicked.");
+    console.log("User code:", code);
     console.log("User HTML:", htmlCode);
     console.log("User CSS:", cssCode);
 
     if (!code || !htmlCode || !cssCode) {
-        console.error("All code sections must be provided."); // Log  
-        return;
+      console.error("All code sections must be provided.");
+      return;
     }
 
     try {
-        //   with all code sections
-        const response = await axios.post('http://localhost:5000/generate-flowchart', { code, htmlCode, cssCode });
-        console.log("Response from server:", response); // Log the entire response
-
-        // Extract the Mermaid syntax  
-        setMermaidCode(response.data.mermaid);
+      const response = await axios.post('http://localhost:5000/generate-flowchart', { code, htmlCode, cssCode });
+      console.log("Response from server:", response);
+      setMermaidCode(response.data.mermaid);
     } catch (error) {
-        console.error('Error generating flowchart:', error); // Log any errors
+      console.error('Error generating flowchart:', error);
     }
   };
 
-  // Handle preview functionality
   const handlePreview = () => {
     const previewFrame = document.getElementById('preview-frame');
     const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
@@ -64,7 +69,6 @@ const App = () => {
     doc.close();
   };
 
-  // Handle LLM chat submission
   const handleLLMChat = async () => {
     try {
       console.log('Sending request to server:', { llmInput, code, htmlCode, cssCode });
@@ -88,165 +92,45 @@ const App = () => {
     }
   };
 
-  //   app UI
   const setDefaultCode = () => {
-    setCode(` 
-`);
-    setHtmlCode(`
-<div id='two'></div>
-<div id='three'></div>
-<div id='four'></div>
-
-
-<div id='six'></div> 
-<div id='seven'></div>
-<div id='eight'></div>`);
-    setCssCode(`#one{
-  position: absolute;
-  top: 25%;
-  left: 25%;
-  height: 50%;
-  width: 50%;
-  border-style: solid;
-  border-width: 5px;
-  background: rgba(0,0,0,0);
- transform: scale(1);
-	animation: pulse 5.11s infinite, rotationA  5.11s infinite; 
-}
-
-#two{
-  position: absolute;
-  top: 25%;
-  left: 25%;
-  height: 50%;
-  width: 50%;
-  border-style: solid;
-  border-width: 5px;
-  background: rgba(0,0,255,.1);
-  transform: scale(1);
-	animation: pulse 10.213s infinite, rotationA 10.213s infinite; 
-}
-
-#three{
-  position: absolute;
-  top: 25%;
-  left: 25%;
-  height: 50%;
-  width: 50%;
-  border-style: solid;
-  border-width: 5px;
-  background: rgba(0,255,0,0.1);
-  transform: scale(1);
-  
-    animation: rotationA 9.125s infinite, pulse 9.125s infinite; 
-}
-
-#four{
-  position: absolute;
-  top: 25%;
-  left: 25%;
-  height: 50%;
-  width: 50%;
-  border-style: solid;
-  border-width: 5px;
-  background: rgba(255,0,0,0.1);
-  
-  animation: pulse 13s infinite; 
-  animation: rotationA 15s infinite, pusle 15s infinite; 
-}
-
-
-#five{
-  position: absolute;
-  
-  height: 100%;
-  width: 100%;
-  border-style: solid;
-  border-width: 5px;
-  background: rgba(0,0,0,0);
- transform: scale(1);
-	animation: pulse 5.231s infinite, rotationA  5.231s infinite; 
-}
-
-#six{
-  position: absolute;
-  
-  height: 100%;
-  width: 100%;
-  border-style: solid;
-  border-width: 5px;
-  background: rgba(0,0,255,.1);
-  transform: scale(1);
-	animation: pulse 10s infinite, rotationA 10s infinite; 
-}
-
-#seven{
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  border-style: solid;
-  border-width: 5px;
-  background: rgba(0,255,0,0.1);
-  transform: scale(1);  
-    animation: rotationA 9s infinite, pulse 9s infinite; 
-}
-
-#eight{
-  position: absolute;
-  ;
-  height: 100%;
-  width: 100%;
-  border-style: solid;
-  border-width: 5px;
-  background: rgba(255,0,0,0.1);  
-  animation: rotationA 15s infinite, pusle 15s infinite; 
-}
-
-
-@keyframes pulse {
-	0% {
-		transform: scale(2);
-	
-	}
-
-	70% {
-		transform: scale(1);
-	
-	}
-
-	100% {
-		transform: scale(2);
-	
-	}
-}
-
-
-@keyframes rotationA {
-	50% {transform: rotate(180deg);
-    
-  }
-
-}`);
+    setCode(`// Your default JavaScript code here`);
+    setHtmlCode(`<!-- Your default HTML code here -->`);
+    setCssCode(`/* Your default CSS code here */`);
   };
 
   return (
     <div className="app-container">
       <h1>Creative Coding to Flowchart Generator</h1>
       <div className="input-container">
-        <textarea
-          placeholder="Paste your JavaScript code here..."
+        <CodeMirror
           value={code}
-          onChange={(e) => setCode(e.target.value)}
+          options={{
+            mode: 'javascript',
+            theme: 'material-darker',
+            lineNumbers: true
+          }}
+          onChange={(editor, data, value) => setCode(value)}
+          ref={jsEditorRef}
         />
-        <textarea
-          placeholder="Paste your HTML code here..."
+        <CodeMirror
           value={htmlCode}
-          onChange={(e) => setHtmlCode(e.target.value)}
+          options={{
+            mode: 'htmlmixed',
+            theme: 'material-darker',
+            lineNumbers: true
+          }}
+          onChange={(editor, data, value) => setHtmlCode(value)}
+          ref={htmlEditorRef}
         />
-        <textarea
-          placeholder="Paste your CSS code here..."
+        <CodeMirror
           value={cssCode}
-          onChange={(e) => setCssCode(e.target.value)}
+          options={{
+            mode: 'css',
+            theme: 'material-darker',
+            lineNumbers: true
+          }}
+          onChange={(editor, data, value) => setCssCode(value)}
+          ref={cssEditorRef}
         />
         <button onClick={handleSubmit}>Generate Flowchart</button>
         <button onClick={handlePreview}>Preview</button>
@@ -254,7 +138,6 @@ const App = () => {
       </div>
       <div className="output-container">
         <h2>Flowchart Preview</h2>
-        {/* Display the Mermaid chart if available */}
         {mermaidCode ? (
           <div className="mermaid">{mermaidCode}</div>
         ) : (
